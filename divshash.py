@@ -30,6 +30,7 @@ hashMap = [
     [['V', 'W'], ['g.', 'G.']],
     [['X', 'Y'], ['d.', 'D.']],
     [['Z', 'Z'], ['z.', 'Z.']],
+    [['P', 'Q'], ['6' , '4' ]],
 
 
     [['1', '2'], ['f', 'F']],
@@ -263,7 +264,25 @@ class ComponentX:
                 returnString.pop(i)
         self.hashKey = ''.join(returnString)
         self.hashBin = str(bin(int(self.hashKey)))[2:]
-        
 
+class ComponentZ:
+    def __init__(self, stri):
+        root = stri.split('_')[1]
+        self.element = root
+        self.string = stri
+        rootSeperated = []
+        outputList = []
+        for i in range(len(root)):
+            if root[i:i+1]=='.':
+                rootSeperated.append(root[i-1:i+1])
+            elif root[i:i+1].endswith('.')==False and root[i+1:i+2]!='.':
+                rootSeperated.append(root[i:i+1])
+        for i in range(len(rootSeperated)):
+            for x in range(len(hashMap)):
+                for y in range(2):
+                    if rootSeperated[i]==hashMap[x][1][y]:
+                        outputList.append(hashMap[x][0][y])
+        self.dehashed = ''.join(outputList)
+        
 
 ####################################################################################################
