@@ -38,6 +38,7 @@ hashMap = [
     [['5', '6'], ['n', 'N']],
     [['7', '8'], ['v', 'V']],
     [['9', '0'], ['1', '0']],
+
 ]
 
 # IDENTITY HASH START ############################################################################
@@ -226,6 +227,55 @@ def DehashWithFile(directory):
     
     return '\n'.join(dehashed)
 
+def EncryptFile(directory, key):
+    file = open(directory,'r')
+    lines = file.readlines()
+    hashedList = []
+    for i in range(len(lines)):
+        hashedList.append(HashString(lines[i]))
+    
+    encryptedString = '\n'.join(hashedList)
+    writeFile = open(directory, 'w')
+    writeFile.write(encryptedString)
+
+    file.close()
+    writeFile.close()
+    file = open(directory, 'a')
+    file.write(f'\n$~{bin(key)[2:]}')
+
+
+def DecryptFile(directory, key):
+    def dec(binary_str):
+        decimal = 0
+        power = len(binary_str) - 1 
+        for digit in binary_str:
+            if digit == '1':
+                decimal += 2 ** power
+            power -= 1
+        return decimal
+
+    fileContent_obj = open(directory, 'r')
+    fileContentRead = fileContent_obj.readlines()
+    fileContentReadPolished = []
+    for i in range(len(fileContentRead)-1):
+        fileContentReadPolished.append(fileContentRead[i][:-1])
+
+    fileContentDecrypted = []
+    for i in fileContentReadPolished:
+        fileContentDecrypted.append(DehashString(i))
+    
+    # To this point, everything in the file is probably decrypted.
+    # Now, The key should be matching the encryption key.
+
+    # Changing the key to decimal
+    keyLine = dec(fileContentRead[len(fileContentRead)-1][2:])
+    if keyLine==key: # IF KEY IS CORRECT
+        fileWrite = open(directory, 'w') #OPEN THE FILE FOR WRITING
+        fileWrite.write('\n'.join(fileContentDecrypted))
+    else:
+        print('Err: KEY ERROR (INCORRECT KEY)')
+        return
+    
 class ComponentX:
     def __init__(self, string, mode='d'):
         capitalCount = 0
@@ -284,5 +334,7 @@ class ComponentZ:
                         outputList.append(hashMap[x][0][y])
         self.dehashed = ''.join(outputList)
         
+
+
 
 ####################################################################################################
